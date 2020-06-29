@@ -20,119 +20,66 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="zurag">
-          <td>image1.bmp</td>
-          <td>image1.bmp</td>
-        </tr>
-        <tr>
-          <td>image2.bmp</td>
-          <td>image2.bmp</td>
-        </tr>
-        <tr>
-          <td>image3.bmp</td>
-          <td>image3.bmp</td>
-        </tr>
-        ...
-        <tr>
-          <td>image4.bmp</td>
-          <td>image4.bmp</td>
-        </tr>
-        <tr>
-          <td>image5.bmp</td>
-          <td>image5.bmp</td>
-        </tr>
-        <tr>
-          <td>image6.bmp</td>
-          <td>image6.bmp</td>
-        </tr>
-        <tr>
-          <td>image2.bmp</td>
-          <td>image2.bmp</td>
-        </tr>
-        <tr>
-          <td>image3.bmp</td>
-          <td>image3.bmp</td>
-        </tr>
-        ...
-        <tr>
-          <td>image4.bmp</td>
-          <td>image4.bmp</td>
-        </tr>
-        <tr>
-          <td>image5.bmp</td>
-          <td>image5.bmp</td>
-        </tr>
-        <tr>
-          <td>image6.bmp</td>
-          <td>image6.bmp</td>
-        </tr>
-        <tr>
-          <td>image2.bmp</td>
-          <td>image2.bmp</td>
-        </tr>
-        <tr>
-          <td>image3.bmp</td>
-          <td>image3.bmp</td>
-        </tr>
-        ...
-        <tr>
-          <td>image4.bmp</td>
-          <td>image4.bmp</td>
-        </tr>
-        <tr>
-          <td>image5.bmp</td>
-          <td>image5.bmp</td>
-        </tr>
-        <tr>
-          <td>image6.bmp</td>
-          <td>image6.bmp</td>
-        </tr>
-        <tr>
-          <td>image2.bmp</td>
-          <td>image2.bmp</td>
-        </tr>
-        <tr>
-          <td>image3.bmp</td>
-          <td>image3.bmp</td>
-        </tr>
-        ...
-        <tr>
-          <td>image4.bmp</td>
-          <td>image4.bmp</td>
-        </tr>
-        <tr>
-          <td>image5.bmp</td>
-          <td>image5.bmp</td>
-        </tr>
-        <tr>
-          <td>image25.bmp</td>
-          <td>image68.bmp</td>
-        </tr>
-        <tr>
-          <td>image2.bmp</td>
-          <td>image2.bmp</td>
-        </tr>
-        <tr>
-          <td>image3.bmp</td>
-          <td>image3.bmp</td>
-        </tr>
-        ...
-        <tr>
-          <td>image4.bmp</td>
-          <td>image4.bmp</td>
-        </tr>
-        <tr>
-          <td>image5.bmp</td>
-          <td>image5.bmp</td>
-        </tr>
-        <tr>
-          <td>image25.bmp</td>
-          <td>image68.bmp</td>
+        <tr class="differ">
         </tr>
       </tbody>
     </table>
       <script>
+           const electron = require('electron');
+           const { ipcRenderer } = electron;
+           const tbody = document.querySelector('tbody');
+
+           var table = document.querySelector('.table-striped');
            
+
+           ipcRenderer.on('item:add', (e, displayOne, displayTwo) => {
+             var count;
+            for(var i = 0; i < displayOne.length; i++) {
+              count = 0;
+              //row = table.insertRow(i+1);
+              var row = table.insertRow(i+1);
+              var cell1 = row.insertCell(0);
+              var cell2 = row.insertCell(1);
+              
+              for(var j = 0; j < displayTwo.length; j++) {
+                if(displayOne[i] === displayTwo[j]) {
+                  cell1.innerHTML = displayOne[i];
+                  cell2.innerHTML = displayTwo[i];
+                  count++;
+                } 
+              }
+              if(count === 0) {
+                cell1.innerHTML = displayOne[i];
+              } 
+              var k = i + 1;                                                                 /*  <-- Can't display other folder's file names !!! */
+            }
+
+            for(i = 0; i < displayTwo.length; i++) {
+              count = 0;
+              row = table.insertRow(k+1);
+              cell1 = row.insertCell(0);
+              cell2 = row.insertCell(1);
+              for(j = 0; j < displayOne.length; j++) {
+                if(displayTwo[i] === displayOne[j]) {
+                  count++;
+                }
+                
+              }
+              if(count === 0) {
+                  cell2.innerHTML = displayTwo[i];
+                  k++;
+                }
+            }
+
+            
+
+           });
+           // clear items
+          
+          
+           
+         
+          
       </script>
   </body>
 </html>

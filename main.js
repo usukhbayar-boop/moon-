@@ -10,31 +10,35 @@
 
 
 /*!
-   @brief   
+   @brief   Image comparing desktop application   
    @ingroup 
    @details 
-
-
-
-   Note:
+   Note: Choosing two folders to comparing two images for show differences
 */
 
-const electron = require('electron');
-const url = require('url');
-const path = require('path');
+/************************************************************************************************************************
+ * 
+ *                                                  GLOBAL MODULES
+ * 
+ * 
+ ************************************************************************************************************************/
+
+const electron = require('electron');                              /* Declaring "electron" module */
+const url = require('url');                                        /* Declaring "url" module */
+const path = require('path');                                      /* Declaing "path" module */
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
-let mainWindow;                                /* variable that contains main window html page*/
-let addwindow;                                 /* that contains */
+let mainWindow;                                                    /* variable that contains main window html page*/
+let addwindow;                                                     /* that contains */
 
-app.on('ready', () => {                        /* Listen for app to be ready */
+app.on('ready', () => {                                            /* Listen for app to be ready */
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         }
-    });                                        /* Create new window */
-                                               /* Load html into window */
+    });                                                            /* Create new window */
+                                                                   /* Load html into window */
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'mainWindow.html'),
         protocol: 'file:',
@@ -44,38 +48,45 @@ app.on('ready', () => {                        /* Listen for app to be ready */
         app.quit();
     });
 
-                                               /* Build menu*/
+                                                                    /* Build menu*/
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     // Insert menu
     Menu.setApplicationMenu(mainMenu);                                          
 });
   
-    function createAddWindow() {               /* Handle add create window */
+    function createAddWindow() {                                    /* Handle add create window */
     addWindow = new BrowserWindow({
-    width: 400,
+    width: 600,
     height: 300,
     title: 'Compare Images',
     webPreferences: {
         nodeIntegration: true
     }     
-    });                                        /* Create new window */
-                                               /* Load html into window */
+    });                                                            /* Create new window */
+                                                                   /* Load html into window */
     addWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'addWindow.html'),
         protocol: 'file:',
         slashes: true
     }));
-                                               /* Garbage Collection */
+                                                                   /* Garbage Collection */
     addWindow.on('close', () => {
         addwindow = null;
     });
 }
 
 
-const mainMenuTemplate = [                     /* Create menu template */
+
+// Catch file name
+ipcMain.on('item:add', (e, displayOne, displayTwo) => {
+    mainWindow.webContents.send('item:add', displayOne, displayTwo);
+    addWindow.close();
+});
+
+const mainMenuTemplate = [                                         /* Create menu template */
     {
-        label: 'Харьцуулах',                   /* use label keyword to create menu items */
-        submenu: [                             /* create submenu */
+        label: 'Харьцуулах',                                       /* use label keyword to create menu items */
+        submenu: [                                                 /* create submenu */
             {
                 label: 'Зураг нэмэх',
                 click() {
