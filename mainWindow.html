@@ -3,36 +3,53 @@
   <head>
     <meta charset="UTF-8">
     <title>Moon!</title>
-    <link rel="stylesheet" href="photon.css">
-    <link rel="stylesheet" href="photon.min.css">
     <style>
-      body {
+body {
         overflow: scroll;
       }
+      #customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
     </style>
   </head>
   <body>
-    <table class="table-striped">
-      <thead>
-        <tr>
-          <th>Нэр</th>
-          <th>Нэр</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="differ">
-        </tr>
-      </tbody>
+    <h2>Image Comparing</h2>
+
+    <table id="customers">
+      <tr id="clickme">
+        <th style="width: 45%;">File</th>
+        <th style="width: 45%;">File</th>
+      </tr>
     </table>
       <script>
            const electron = require('electron');
            const { ipcRenderer } = electron;
-           const tbody = document.querySelector('tbody');
 
-           var table = document.querySelector('.table-striped');
-           
+const path = require('path');
+const BrowserWindow = electron.remote.BrowserWindow;
 
+           var table = document.getElementById('customers');
            ipcRenderer.on('item:add', (e, displayOne, displayTwo) => {
+            
              var count;
             for(var i = 0; i < displayOne.length; i++) {
               count = 0;
@@ -40,16 +57,28 @@
               var row = table.insertRow(i+1);
               var cell1 = row.insertCell(0);
               var cell2 = row.insertCell(1);
-              
               for(var j = 0; j < displayTwo.length; j++) {
                 if(displayOne[i] === displayTwo[j]) {
                   cell1.innerHTML = displayOne[i];
-                  cell2.innerHTML = displayTwo[i];
+                  cell2.innerHTML = displayOne[i];
+                  row.style.backgroundColor = "yellow";
+                  row.addEventListener('click', function (event) {
+  const modalPath = path.join('file://', __dirname, 'compareWindow.html');
+  let win = new BrowserWindow({ width: 700, height: 500, webPreferences: {
+        nodeIntegration: true
+    } });
+  win.on('close', function () { win = null });
+  win.loadURL(modalPath);
+  win.show();
+});
                   count++;
                 } 
               }
               if(count === 0) {
                 cell1.innerHTML = displayOne[i];
+                row.addEventListener('click', function() {
+                alert('Нөгөө хавтас дотор ийм нэртэй файл алга байна!');
+                });
               } 
               var k = i + 1;                                                                 /*  <-- Can't display other folder's file names !!! */
             }
@@ -67,16 +96,31 @@
               }
               if(count === 0) {
                   cell2.innerHTML = displayTwo[i];
+                  row.addEventListener('click', function() {
+                alert('Нөгөө хавтас дотор ийм нэртэй файл алга байна!');
+                });
                   k++;
                 }
             }
-
             
+      
 
            });
            // clear items
-          
-          
+           
+  
+
+/*function createBrowserWindow() {
+  const remote = require('electron').remote;
+  const BrowserWindow = remote.BrowserWindow;
+  const win = new BrowserWindow({
+    height: 600,
+    width: 800
+  }); 
+
+  win.loadURL('compareWindow.html');
+} */
+
            
          
           
